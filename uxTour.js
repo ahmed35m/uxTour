@@ -5,8 +5,9 @@
 //
 // Copyright 2016, Rune Lyngbach Jensen
 // Email: lyngbachjensen@gmail.com
-//
-// licensed under MIT
+//// licensed under MIT
+//  09-07-2020 - Updated tooltip.top value calculation to fix overflow issue
+
 
 var uxTour = function (options) {
 	'use strict';
@@ -67,7 +68,7 @@ uxTour.prototype.start = function (tour) {
 		this.paragraph.style.cssText = 'color: #FFF;';
 
 		this.gotIt.id = 'uxGotIt';
-		this.gotIt.style.cssText = 'border: none; background: none; color: #FFF; padding: 0; outline: none; font-size: 16px; cursor: pointer;';
+		this.gotIt.style.cssText = 'border: 1px solid; background: none; color: #FFF; padding: 9px; outline: none; font-size: 16px; cursor: pointer;';
 		this.gotIt.innerHTML = this.options.buttonText;
 
 		this.tooltip.appendChild(this.paragraph);
@@ -146,7 +147,7 @@ uxTour.prototype.showStep = function () {
 		marginLeft = rect.width / 2;
 
 		if (rect.width > rect.height) {
-			this.highlight.style.width = rect.width + 'px';
+			this.highlight.style.width = (rect.width + 10 ) +'px';
 			this.highlight.style.height = (this.options.frame === 'circle' ? rect.width : rect.height) + 'px';
 
 			if (step.position === 'fixed') {
@@ -155,7 +156,7 @@ uxTour.prototype.showStep = function () {
 				this.highlight.style.top = (rect.top + window.pageYOffset + marginTop) + 'px';
 			}
 			
-			this.highlight.style.left = (rect.left + window.pageXOffset - padding) + 'px';
+			this.highlight.style.left = (rect.left + window.pageXOffset - (padding*0.15) ) + 'px'; //-padding
 			this.highlight.style[prefix + 'Transform'] = 'translate3d(0, -50%, 0)';
 		} else {
 			this.highlight.style.width = (this.options.frame === 'circle' ? rect.height : rect.width) + 'px';
@@ -167,7 +168,7 @@ uxTour.prototype.showStep = function () {
 				this.highlight.style.top = (rect.top + window.pageYOffset - padding) + 'px';
 			}
 			
-			this.highlight.style.left = (rect.left + window.pageXOffset + marginLeft) + 'px';
+			this.highlight.style.left = (rect.left + window.pageXOffset - marginLeft) + 'px';
 			this.highlight.style[prefix + 'Transform'] = 'translate3d(-50%, 0, 0)';
 		}
 
@@ -245,7 +246,8 @@ uxTour.prototype.setText = function (step) {
 		if (step.position === 'fixed') {
 			this.tooltip.style.top = (elementRect.top - marginTop - tooltipRect.height - 50) + 'px';
 		} else {
-			this.tooltip.style.top = (elementRect.top + window.pageYOffset - (marginTop / 2) - tooltipRect.height - 50) + 'px';
+			this.tooltip.style.top = Math.abs ((elementRect.top + window.pageYOffset - ((marginTop / 2 )*0) - (tooltipRect.height +50))) + 'px';
+
 		}
 	} else if (direction === 'bottom') {
 		if (step.position === 'fixed') {
@@ -347,3 +349,4 @@ uxTour.prototype.getPrefix = function () {
 		js: pre[0].toUpperCase() + pre.substr(1)
 	};
 };
+
